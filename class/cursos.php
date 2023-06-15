@@ -1,4 +1,8 @@
 <?php
+require '../vendor/autoload.php';
+use League\HTMLToMarkdown\HtmlConverter;
+
+
 class Employee
 {
 
@@ -6,15 +10,15 @@ class Employee
     private $conn;
 
     // Table
-    private $db_table = "cupones";
+    private $db_table = "cursos_fp";
 
     // Columns
     public $id;
     public $Nombre;
-    public $Email;
-    public $Telefono;
-    public $Curso;
-    public $Fecha;
+    public $Objetivos;
+    public $Preparacion;
+    public $Trabajo;
+    public $Acceso;
 
     // Db connection
     public function __construct($db)
@@ -25,7 +29,7 @@ class Employee
     // GET ALL
     public function getEmployees()
     {
-        $sqlQuery = "SELECT id, Nombre, Email, Telefono, Curso, Apellidos, Fecha FROM " . $this->db_table . "";
+        $sqlQuery = "SELECT id, Nombre, Objetivos, Preparacion, Trabajo, Apellidos, Acceso FROM " . $this->db_table . "";
         $stmt = $this->conn->prepare($sqlQuery);
         $stmt->execute();
         return $stmt;
@@ -38,26 +42,26 @@ class Employee
                         " . $this->db_table . "
                     SET
                     Nombre = :Nombre, 
-                    Email = :Email, 
-                        Telefono = :Telefono, 
-                        Curso = :Curso, 
-                        Fecha = :Fecha";
+                    Objetivos = :Objetivos, 
+                        Preparacion = :Preparacion, 
+                        Trabajo = :Trabajo, 
+                        Acceso = :Acceso";
 
         $stmt = $this->conn->prepare($sqlQuery);
 
         // sanitize
         $this->Nombre = htmlspecialchars(strip_tags($this->Nombre));
-        $this->Email = htmlspecialchars(strip_tags($this->Email));
-        $this->Telefono = htmlspecialchars(strip_tags($this->Telefono));
-        $this->Curso = htmlspecialchars(strip_tags($this->Curso));
-        $this->Fecha = htmlspecialchars(strip_tags($this->Fecha));
+        $this->Objetivos = htmlspecialchars(strip_tags($this->Objetivos));
+        $this->Preparacion = htmlspecialchars(strip_tags($this->Preparacion));
+        $this->Trabajo = htmlspecialchars(strip_tags($this->Trabajo));
+        $this->Acceso = htmlspecialchars(strip_tags($this->Acceso));
 
         // bind data
         $stmt->bindParam(":Nombre", $this->Nombre);
-        $stmt->bindParam(":Email", $this->Email);
-        $stmt->bindParam(":Telefono", $this->Telefono);
-        $stmt->bindParam(":Curso", $this->Curso);
-        $stmt->bindParam(":Fecha", $this->Fecha);
+        $stmt->bindParam(":Objetivos", $this->Objetivos);
+        $stmt->bindParam(":Preparacion", $this->Preparacion);
+        $stmt->bindParam(":Trabajo", $this->Trabajo);
+        $stmt->bindParam(":Acceso", $this->Acceso);
 
         if ($stmt->execute()) {
             return true;
@@ -66,15 +70,17 @@ class Employee
     }
 
     // UPDATE
-    public function getSingleEmployee()
+    public function getSingleCurso()
     {
+        $converter = new HtmlConverter();
+
         $sqlQuery = "SELECT
                         id, 
                         Nombre, 
-                        Email, 
-                        Telefono, 
-                        Curso, 
-                        Fecha
+                        Objetivos, 
+                        Preparacion, 
+                        Trabajo, 
+                        Acceso
                       FROM
                         " . $this->db_table . "
                     WHERE 
@@ -90,10 +96,10 @@ class Employee
         $dataRow = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $this->Nombre = $dataRow['Nombre'];
-        $this->Email = $dataRow['Email'];
-        $this->Telefono = $dataRow['Telefono'];
-        $this->Curso = $dataRow['Curso'];
-        $this->Fecha = $dataRow['Fecha'];
+        $this->Objetivos = (html_entity_decode($dataRow['Objetivos']));
+        $this->Preparacion = (html_entity_decode($dataRow['Preparacion']));
+        $this->Trabajo = html_entity_decode($dataRow['Trabajo']);
+        $this->Acceso = html_entity_decode($dataRow['Acceso']);
     }
 
     // UPDATE
@@ -103,28 +109,28 @@ class Employee
                         " . $this->db_table . "
                     SET
                         Nombre = :Nombre, 
-                        Email = :Email, 
-                        Telefono = :Telefono, 
-                        Curso = :Curso, 
-                        Fecha = :Fecha
+                        Objetivos = :Objetivos, 
+                        Preparacion = :Preparacion, 
+                        Trabajo = :Trabajo, 
+                        Acceso = :Acceso
                     WHERE 
                         id = :id";
 
         $stmt = $this->conn->prepare($sqlQuery);
 
         $this->Nombre = htmlspecialchars(strip_tags($this->Nombre));
-        $this->Email = htmlspecialchars(strip_tags($this->Email));
-        $this->Telefono = htmlspecialchars(strip_tags($this->Telefono));
-        $this->Curso = htmlspecialchars(strip_tags($this->Curso));
-        $this->Fecha = htmlspecialchars(strip_tags($this->Fecha));
+        $this->Objetivos = htmlspecialchars(strip_tags($this->Objetivos));
+        $this->Preparacion = htmlspecialchars(strip_tags($this->Preparacion));
+        $this->Trabajo = htmlspecialchars(strip_tags($this->Trabajo));
+        $this->Acceso = htmlspecialchars(strip_tags($this->Acceso));
         $this->id = htmlspecialchars(strip_tags($this->id));
 
         // bind data
         $stmt->bindParam(":Nombre", $this->Nombre);
-        $stmt->bindParam(":Email", $this->Email);
-        $stmt->bindParam(":Telefono", $this->Telefono);
-        $stmt->bindParam(":Curso", $this->Curso);
-        $stmt->bindParam(":Fecha", $this->Fecha);
+        $stmt->bindParam(":Objetivos", $this->Objetivos);
+        $stmt->bindParam(":Preparacion", $this->Preparacion);
+        $stmt->bindParam(":Trabajo", $this->Trabajo);
+        $stmt->bindParam(":Acceso", $this->Acceso);
         $stmt->bindParam(":id", $this->id);
 
         if ($stmt->execute()) {
